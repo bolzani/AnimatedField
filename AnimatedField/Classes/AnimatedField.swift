@@ -205,8 +205,7 @@ open class AnimatedField: UIView {
     
     private func setupTextField() {
         textField.delegate = self
-//        textField.placeholder = format.titleAlwaysVisible ? "" : placeholder
-        textField.attributedPlaceholder = format.titleAlwaysVisible ? nil : attributedPlaceholder
+        textField.attributedPlaceholder = attributedPlaceholder
         textField.textColor = format.textColor
         textField.tag = tag
         textField.backgroundColor = .clear
@@ -214,7 +213,7 @@ open class AnimatedField: UIView {
     
     private func setupTitle() {
         titleLabel.text = placeholder
-        titleLabel.alpha = format.titleAlwaysVisible ? 1.0 : 0.0
+        titleLabel.alpha = 0.0
     }
     
     private func setupTextView() {
@@ -374,6 +373,8 @@ extension AnimatedField {
     
     func animateOut() {
         textField.attributedPlaceholder = attributedPlaceholder
+        let hasText = textField.text!.count > 0
+        if format.titleAlwaysVisible && hasText { return }
         titleLabelTextViewConstraint?.constant = -20
         titleLabelTextFieldConstraint?.constant = -20
         UIView.animate(withDuration: 0.3) { [weak self] in
