@@ -80,6 +80,14 @@ open class AnimatedField: UIView {
         }
     }
     
+    public var attributedPlaceholder: NSAttributedString? {
+        didSet {
+            textField.attributedPlaceholder = attributedPlaceholder
+            titleLabel.text = attributedPlaceholder?.string
+        }
+    }
+    
+    
     /// Uppercased field format
     public var uppercased = false
     
@@ -312,7 +320,7 @@ open class AnimatedField: UIView {
     }
     
     @objc func didChooseNumberPicker() {
-//        textField.text = numberPicker
+        //        textField.text = numberPicker
         _ = resignFirstResponder()
     }
 }
@@ -332,7 +340,12 @@ extension AnimatedField {
     }
     
     func animateOut() {
-        textField.placeholder = placeholder
+        if let attr = attributedPlaceholder {
+            textField.attributedPlaceholder = attr
+        } else {
+            textField.placeholder = placeholder
+        }
+        
         titleLabelTextViewConstraint?.constant = -20
         titleLabelTextFieldConstraint?.constant = -20
         UIView.animate(withDuration: 0.3) { [weak self] in
