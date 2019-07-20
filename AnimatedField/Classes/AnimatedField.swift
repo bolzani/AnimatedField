@@ -31,7 +31,7 @@ open class AnimatedField: UIView {
     private var dateFormat: String?
     
     /// Picker values
-    private var numberPicker: UIPickerView?
+    private var picker: UIPickerView?
     var numberOptions = [Int]()
     
     var formatter: NumberFormatter {
@@ -50,7 +50,7 @@ open class AnimatedField: UIView {
                 setupDatePicker(minDate: minDate, maxDate: maxDate, chooseText: chooseText)
             }
             if case let AnimatedFieldType.numberpicker(defaultNumber, minNumber, maxNumber, chooseText) = type {
-                setupPicker(defaultNumber: defaultNumber, minNumber: minNumber, maxNumber: maxNumber, chooseText: chooseText)
+                setupNumberPicker(defaultNumber: defaultNumber, minNumber: minNumber, maxNumber: maxNumber, chooseText: chooseText)
             }
             if case AnimatedFieldType.price = type {
                 keyboardType = .decimalPad
@@ -69,6 +69,9 @@ open class AnimatedField: UIView {
             }
             if case AnimatedFieldType.phone = type {
                 keyboardType = .phonePad
+            }
+            if case let AnimatedFieldType.custompicker(_, chooseText) = type {
+                setupCustomPicker(chooseText: chooseText)
             }
             if case AnimatedFieldType.multiline = type {
                 showTextView(true)
@@ -278,28 +281,47 @@ open class AnimatedField: UIView {
         textField.inputView = datePicker
     }
     
-    private func setupPicker(defaultNumber: Int, minNumber: Int, maxNumber: Int, chooseText: String?) {
+    private func setupNumberPicker(defaultNumber: Int, minNumber: Int, maxNumber: Int, chooseText: String?) {
         
-        numberPicker = UIPickerView()
-        numberPicker?.dataSource = self
-        numberPicker?.delegate = self
-        numberPicker?.setValue(format.textColor, forKey: "textColor")
+        picker = UIPickerView()
+        picker?.dataSource = self
+        picker?.delegate = self
+        picker?.setValue(format.textColor, forKey: "textColor")
         
         numberOptions += minNumber...maxNumber
         if let index = numberOptions.firstIndex(where: {$0 == defaultNumber}) {
-            numberPicker?.selectRow(index, inComponent:0, animated:false)
+            picker?.selectRow(index, inComponent:0, animated:false)
         }
         
         let toolBar = UIToolbar()
         toolBar.sizeToFit()
         let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let chooseButton = UIBarButtonItem(title: chooseText ?? "OK", style: .plain, target: self, action: #selector(didChooseNumberPicker))
+        let chooseButton = UIBarButtonItem(title: chooseText ?? "OK", style: .plain, target: self, action: #selector(didChoosePicker))
         chooseButton.tintColor = format.textColor
         chooseButton.tag = 1
         toolBar.setItems([spaceButton, chooseButton], animated: false)
         
         textField.inputAccessoryView = toolBar
-        textField.inputView = numberPicker
+        textField.inputView = picker
+    }
+    
+    private func setupCustomPicker(chooseText: String?) {
+        
+        picker = UIPickerView()
+        picker?.dataSource = self
+        picker?.delegate = self
+        picker?.setValue(format.textColor, forKey: "textColor")
+        
+        let toolBar = UIToolbar()
+        toolBar.sizeToFit()
+        let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let chooseButton = UIBarButtonItem(title: chooseText ?? "OK", style: .plain, target: self, action: #selector(didChoosePicker))
+        chooseButton.tintColor = format.textColor
+        chooseButton.tag = 1
+        toolBar.setItems([spaceButton, chooseButton], animated: false)
+        
+        textField.inputAccessoryView = toolBar
+        textField.inputView = picker
     }
     
     open override func becomeFirstResponder() -> Bool {
@@ -326,8 +348,12 @@ open class AnimatedField: UIView {
         _ = resignFirstResponder()
     }
     
-    @objc func didChooseNumberPicker() {
-        //        textField.text = numberPicker
+    @objc func didChoosePicker() {
+        if case let AnimatedFieldType.custompicker(options, _) = type {
+            textField.text = options[picker!.selectedRow(inComponent: 0)]
+        } else {
+            textField.text = "\(numberOptions[picker!.selectedRow(inComponent: 0)])"
+        }
         _ = resignFirstResponder()
     }
 }

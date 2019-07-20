@@ -22,6 +22,7 @@ public enum AnimatedFieldType {
     case cpf
     case name
     case phone
+    case custompicker([String], String?) // options, choose text
     
     var decimal: String {
         var separator = Locale.current.decimalSeparator ?? "\\."
