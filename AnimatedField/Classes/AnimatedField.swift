@@ -80,11 +80,8 @@ open class AnimatedField: UIView {
         }
     }
     
-    public var attributedPlaceholder: NSAttributedString? {
-        didSet {
-            textField.attributedPlaceholder = attributedPlaceholder
-            titleLabel.text = attributedPlaceholder?.string
-        }
+    internal var attributedPlaceholder: NSAttributedString {
+        return NSAttributedString(string: placeholder, attributes: [.foregroundColor:format.placeholderColor, .font:format.placeholderFont])
     }
     
     
@@ -196,7 +193,8 @@ open class AnimatedField: UIView {
     
     private func setupTextField() {
         textField.delegate = self
-        textField.placeholder = format.titleAlwaysVisible ? "" : placeholder
+//        textField.placeholder = format.titleAlwaysVisible ? "" : placeholder
+        textField.attributedPlaceholder = format.titleAlwaysVisible ? nil : attributedPlaceholder
         textField.textColor = format.textColor
         textField.tag = tag
         textField.backgroundColor = .clear
@@ -330,7 +328,7 @@ open class AnimatedField: UIView {
 extension AnimatedField {
     
     func animateIn() {
-        textField.placeholder = ""
+        textField.attributedPlaceholder = nil
         titleLabelTextViewConstraint?.constant = 1
         titleLabelTextFieldConstraint?.constant = 1
         UIView.animate(withDuration: 0.3) { [weak self] in
@@ -340,12 +338,7 @@ extension AnimatedField {
     }
     
     func animateOut() {
-        if let attr = attributedPlaceholder {
-            textField.attributedPlaceholder = attr
-        } else {
-            textField.placeholder = placeholder
-        }
-        
+        textField.attributedPlaceholder = attributedPlaceholder
         titleLabelTextViewConstraint?.constant = -20
         titleLabelTextFieldConstraint?.constant = -20
         UIView.animate(withDuration: 0.3) { [weak self] in

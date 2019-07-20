@@ -19,6 +19,9 @@ public struct AnimatedFieldFormat {
     /// Font for text field
     public var textFont = UIFont.systemFont(ofSize: 16, weight: .regular)
     
+    /// Font for placeholder
+    public var placeholderFont = UIFont.systemFont(ofSize: 16, weight: .medium)
+    
     /// Font for counter
     public var counterFont = UIFont.systemFont(ofSize: 13, weight: .regular)
     
@@ -27,6 +30,9 @@ public struct AnimatedFieldFormat {
     
     /// Title label text color
     public var titleColor = UIColor.lightGray
+    
+    /// Placeholder color
+    public var placeholderColor = UIColor(red: 0, green: 0, blue: 0.0980392, alpha: 0.22)
     
     /// TextField text color
     public var textColor = UIColor.darkGray

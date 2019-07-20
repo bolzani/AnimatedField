@@ -48,11 +48,11 @@ public enum AnimatedFieldType {
     
     var validationError: String {
         switch self {
-        case .email: return "Email is not valid!"
-        case .username: return "Username is not valid!"
-        case .password: return "Password is not valid!"
-        case .price: return "Price is not valid!"
-        case .url: return "Url is not valid!"
+        case .email: return "E-mail inválido!"
+        case .username: return "Nome de usuário inválido!"
+        case .password(let min, let max): return "A senha deve ter entre \(min) e \(max) caracteres!"
+        case .price: return "Preço inválido"
+        case .url: return "Url inválida!"
         default: return ""
         }
     }
