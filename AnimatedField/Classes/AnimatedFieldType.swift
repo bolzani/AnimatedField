@@ -19,6 +19,9 @@ public enum AnimatedFieldType {
     case datepicker(Date?, Date?, Date?, String?, String?) // default date, min date, max date, choose text, date format
     case numberpicker(Int, Int, Int, String?) // default number, min number, max number, choose text
     case multiline
+    case cpf
+    case name
+    case phone
     
     var decimal: String {
         var separator = Locale.current.decimalSeparator ?? "\\."
@@ -42,6 +45,8 @@ public enum AnimatedFieldType {
         case .password(let min, let max): return ".{\(min),\(max)}"
         case .price(_, let max): return "^(?=.*[1-9])([1-9]\\d*(?:\(decimal)\\d{1,\(max)})?|(?:0\(decimal)\\d{1,\(max)}))$"
         case .url: return "https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,}"
+        case .cpf: return "([0-9]{2}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[\\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\\.]?[0-9]{3}[\\.]?[0-9]{3}[-]?[0-9]{2})"
+        case .phone: return "(?:(?:\\+|00)?(55)\\s?)?(?:\\(?([1-9][0-9])\\)?\\s?)?(?:((?:9\\d|[2-9])\\d{3})\\-?(\\d{4}))"
         default: return ".*"
         }
     }
@@ -49,10 +54,12 @@ public enum AnimatedFieldType {
     var validationError: String {
         switch self {
         case .email: return "E-mail inválido!"
-        case .username: return "Nome de usuário inválido!"
+        case .username(let min, let max): return "Nome de usuário deve ter entre \(min) e \(max) caracteres!"
         case .password(let min, let max): return "A senha deve ter entre \(min) e \(max) caracteres!"
-        case .price: return "Preço inválido"
+        case .price: return "Preço inválido!"
         case .url: return "Url inválida!"
+        case .cpf: return "CPF inválido!"
+        case .phone: return "Telefone inválido!"
         default: return ""
         }
     }

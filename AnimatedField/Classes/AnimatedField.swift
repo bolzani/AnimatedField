@@ -61,6 +61,15 @@ open class AnimatedField: UIView {
             if case AnimatedFieldType.url = type {
                 keyboardType = .URL
             }
+            if case AnimatedFieldType.cpf = type {
+                keyboardType = .numbersAndPunctuation
+            }
+            if case AnimatedFieldType.name = type {
+                textField.autocapitalizationType = .words
+            }
+            if case AnimatedFieldType.phone = type {
+                keyboardType = .phonePad
+            }
             if case AnimatedFieldType.multiline = type {
                 showTextView(true)
                 setupTextViewConstraints()
