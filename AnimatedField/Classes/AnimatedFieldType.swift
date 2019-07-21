@@ -71,4 +71,12 @@ public enum AnimatedFieldType {
         default: return ""
         }
     }
+    
+    var format: String? {
+        switch self {
+        case .cpf: return "###.###.###-##"
+        case .phone: return "(##) ####-####"
+        default: return nil
+        }
+    }
 }

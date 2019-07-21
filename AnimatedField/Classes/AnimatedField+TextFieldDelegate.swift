@@ -8,6 +8,19 @@
 
 import Foundation
 
+extension String {
+    
+    func removeCharacters(from forbiddenChars: CharacterSet) -> String {
+        let passed = self.unicodeScalars.filter { !forbiddenChars.contains($0) }
+        return String(String.UnicodeScalarView(passed))
+    }
+    
+    func removeCharacters(from: String) -> String {
+        return removeCharacters(from: CharacterSet(charactersIn: from))
+    }
+}
+
+
 extension AnimatedField: UITextFieldDelegate {
     
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -15,6 +28,42 @@ extension AnimatedField: UITextFieldDelegate {
         // Priorize datasource returns
         if let shouldChange = dataSource?.animatedField(self, shouldChangeCharactersIn: range, replacementString: string) {
             return shouldChange
+        }
+        if let format = type.format {
+            
+            if case AnimatedFieldType.phone = type {
+                let oldClean = textField.text!.removeCharacters(from: "() -")
+                let newClean = textField.text!.replacingCharacters(in: range, with: string).removeCharacters(from: "() -")
+                
+                if oldClean.count <= 10 && newClean.count <= 10 {
+                    let formatter = DefaultTextInputFormatter(textPattern: "(##) ####-####")
+                    let result = formatter.formatInput(currentText: textField.text ?? "", range: range, replacementString: string)
+                    textField.text = result.formattedText
+                    textField.setCursorLocation(result.caretBeginOffset)
+                    return false
+                } else if oldClean.count <= 10 && newClean.count > 10 {
+                    let formatter = DefaultTextInputFormatter(textPattern: "(##) #####-####")
+                    textField.text = formatter.format(newClean)
+                    return false
+                } else if oldClean.count > 10 && newClean.count <= 10 {
+                    let formatter = DefaultTextInputFormatter(textPattern: "(##) ####-####")
+                    textField.text = formatter.format(newClean)
+                    return false
+                } else if oldClean.count > 10 && newClean.count > 10 {
+                    let formatter = DefaultTextInputFormatter(textPattern: "(##) #####-####")
+                    let result = formatter.formatInput(currentText: textField.text ?? "", range: range, replacementString: string)
+                    textField.text = result.formattedText
+                    textField.setCursorLocation(result.caretBeginOffset)
+                    return false
+                }
+                
+            }
+            
+            let formatter = DefaultTextInputFormatter(textPattern: format)
+            let result = formatter.formatInput(currentText: textField.text ?? "", range: range, replacementString: string)
+            textField.text = result.formattedText
+            textField.setCursorLocation(result.caretBeginOffset)
+            return false
         }
         
         // Copy new character
@@ -93,6 +142,18 @@ extension AnimatedField: UITextFieldDelegate {
         if let error = validateText(textField.text) {
             showAlert(error)
             delegate?.animatedField(self, didShowAlertMessage: error)
+        }
+    }
+}
+
+private extension UITextField {
+    
+    func setCursorLocation(_ location: Int) {
+        if let cursorLocation = position(from: beginningOfDocument, offset: location) {
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else { return }
+                strongSelf.selectedTextRange = strongSelf.textRange(from: cursorLocation, to: cursorLocation)
+            }
         }
     }
 }

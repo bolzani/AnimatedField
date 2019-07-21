@@ -43,18 +43,18 @@ class ViewController: UIViewController {
         format.alertFont = UIFont(name: "AvenirNext-Regular", size: 14)!
         
         emailAnimatedField.format = format
-        emailAnimatedField.placeholder = "Write your email"
-        emailAnimatedField.dataSource = self
-        emailAnimatedField.delegate = self
-        emailAnimatedField.type = .email
+        emailAnimatedField.placeholder = "CPF"
+//        emailAnimatedField.dataSource = self
+//        emailAnimatedField.delegate = self
+        emailAnimatedField.type = .cpf
         emailAnimatedField.tag = 0
         
         usernameAnimatedField.format = format
-        usernameAnimatedField.placeholder = "Write your username"
-        usernameAnimatedField.dataSource = self
-        usernameAnimatedField.delegate = self
-        usernameAnimatedField.lowercased = true
-        usernameAnimatedField.type = .username(4, 10)
+        usernameAnimatedField.placeholder = "Telefone"
+//        usernameAnimatedField.dataSource = self
+//        usernameAnimatedField.delegate = self
+//        usernameAnimatedField.lowercased = true
+        usernameAnimatedField.type = .phone
         usernameAnimatedField.tag = 1
         
         birthdateAnimatedField.format = format
