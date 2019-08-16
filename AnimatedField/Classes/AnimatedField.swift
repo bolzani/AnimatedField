@@ -477,7 +477,7 @@ extension AnimatedField: AnimatedFieldInterface {
         guard format.alertEnabled else { return }
         textField.textColor = format.alertFieldActive ? format.alertColor : format.textColor
         lineView.backgroundColor = format.alertLineActive ? format.alertColor : format.lineColor
-        animateInAlert(message)
+        animateInAlert(message ?? type.validationError)
     }
     
     open func hideAlert() {
